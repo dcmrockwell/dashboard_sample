@@ -1,5 +1,5 @@
 import "@rainbow-me/rainbowkit/styles.css";
-import { connectorsForWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { getDefaultWallets ,connectorsForWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import {
   injectedWallet,
   metaMaskWallet,
@@ -21,22 +21,24 @@ const { chains, provider } = configureChains(
   [alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }), publicProvider()]
 );
 
+const { wallets } = getDefaultWallets({
+  appName: 'RainbowKit demo',
+  chains,
+});
+
 const otherWallets = [
+  trustWallet({ chains }),
   ledgerWallet({ chains }),
   rainbowWallet({ chains }),
-  coinbaseWallet({ chains }),
 ]
 
 const connectors = connectorsForWallets([
-  {
-    groupName: 'Recommended',
-    wallets: [injectedWallet({ chains }), metaMaskWallet({ chains }), walletConnectWallet({ chains }), trustWallet({ chains })],
-  },
+   ...wallets,
   {
     groupName: 'Other Wallets',
     wallets: otherWallets,
   },
-])
+]);
 
 const wagmiClient = createClient({
   autoConnect: true,
