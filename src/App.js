@@ -1,42 +1,48 @@
 import "@rainbow-me/rainbowkit/styles.css";
-import { getDefaultWallets ,connectorsForWallets, RainbowKitProvider } from "@rainbow-me/rainbowkit";
 import {
-  injectedWallet,
+  connectorsForWallets,
+  RainbowKitProvider,
+} from "@rainbow-me/rainbowkit";
+import {
+  walletConnectWallet,
   metaMaskWallet,
   trustWallet,
-  coinbaseWallet,
-  walletConnectWallet,
   ledgerWallet,
+  coinbaseWallet,
   rainbowWallet,
-} from '@rainbow-me/rainbowkit/wallets';
+  braveWallet,
+  omniWallet,
+  injectedWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { mainnet, polygon, optimism, arbitrum } from 'wagmi/chains';
-import { alchemyProvider } from "wagmi/providers/alchemy";
+import { bsc } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
-import Header from './components/Header.js'
+import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
+import Test from "./components/Test.js";
+import Header from "./components/Header.js";
+import Navbar from "./components/Navbar.jsx";
 
-
-const { chains, provider } = configureChains(
-  [mainnet, polygon, optimism, arbitrum],
-  [alchemyProvider({ alchemyId: process.env.ALCHEMY_ID }), publicProvider()]
-);
-
-const { wallets } = getDefaultWallets({
-  appName: 'RainbowKit demo',
-  chains,
-});
-
-const otherWallets = [
-  trustWallet({ chains }),
-  ledgerWallet({ chains }),
-  rainbowWallet({ chains }),
-]
+const { chains, provider } = configureChains([bsc], [publicProvider()]);
 
 const connectors = connectorsForWallets([
-   ...wallets,
   {
-    groupName: 'Other Wallets',
-    wallets: otherWallets,
+    groupName: "Recommended",
+    wallets: [
+      trustWallet({ chains }),
+      metaMaskWallet({ chains }),
+      walletConnectWallet({ chains }),
+    ],
+  },
+  {
+    groupName: "Others",
+    wallets: [
+      coinbaseWallet({ chains }),
+      rainbowWallet({ chains }),
+      ledgerWallet({ chains }),
+      braveWallet({ chains }),
+      omniWallet({ chains }),
+      injectedWallet({ chains }),
+    ],
   },
 ]);
 
@@ -50,8 +56,14 @@ function App() {
   return (
     <>
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
-          <Header />
+        <RainbowKitProvider
+          showRecentTransactions={true}
+          modalSize="compact"
+          chains={chains}
+        >
+          {/* <Header />
+          <Test /> */}
+          <Navbar />
         </RainbowKitProvider>
       </WagmiConfig>
     </>
