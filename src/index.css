@@ -30,21 +30,30 @@
     font-family: "Poppins";
     color: wheat;
   }
-  .button-connect {
-    display: none;
+
+  h1  {
+    color: #f89e52;
+    font-weight: 700;
+    letter-spacing: 1px;
   }
 
   li {
-    cursor: pointer;
-  }
-
-  h1 {
-    color: #f89e52;
-    font-weight: 700;
+  color: #f89e52;
+  cursor: pointer;
   }
 
   span {
-    color: rgb(50, 43, 236);
+    color: white;
+  }
+
+  #border {
+    height: 200px;
+    width: 40%;
+    border-radius: 23px;
+    background: linear-gradient(225deg, #050b1534, #05091234);
+    box-shadow: -8px 8px 16px #02040880,
+        8px -8px 16px #08102088;
+        
   }
     
 }

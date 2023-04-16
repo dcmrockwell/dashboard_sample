@@ -1,8 +1,10 @@
 import "@rainbow-me/rainbowkit/styles.css";
 import {
+  darkTheme,
   connectorsForWallets,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
+
 import {
   walletConnectWallet,
   metaMaskWallet,
@@ -19,7 +21,7 @@ import { bsc } from "wagmi/chains";
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
 import Test from "./components/Test.js";
-import Header from "./components/Header.js";
+import Dashboard from "./components/Dashboard.jsx";
 import Navbar from "./components/Navbar.jsx";
 
 const { chains, provider } = configureChains([bsc], [publicProvider()]);
@@ -57,13 +59,13 @@ function App() {
     <>
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider
+          theme={darkTheme()}
           showRecentTransactions={true}
           modalSize="compact"
           chains={chains}
         >
-          {/* <Header />
-          <Test /> */}
           <Navbar />
+          <Dashboard />
         </RainbowKitProvider>
       </WagmiConfig>
     </>
