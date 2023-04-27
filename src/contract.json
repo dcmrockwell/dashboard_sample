@@ -1,28 +1,13 @@
 [
   {
     "inputs": [
-      { "internalType": "string", "name": "name_", "type": "string" },
-      { "internalType": "string", "name": "symbol_", "type": "string" },
-      { "internalType": "uint256", "name": "totalSupply_", "type": "uint256" },
-      { "internalType": "address[5]", "name": "addrs", "type": "address[5]" },
       {
-        "internalType": "uint256[3]",
-        "name": "feeSettings",
-        "type": "uint256[3]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "minimumTokenBalanceForDividends_",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "serviceFeeReceiver_",
+        "internalType": "address payable",
+        "name": "_fundWallet",
         "type": "address"
-      },
-      { "internalType": "uint256", "name": "serviceFee_", "type": "uint256" }
+      }
     ],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "constructor"
   },
   {
@@ -55,9 +40,41 @@
     "inputs": [
       {
         "indexed": true,
+        "internalType": "uint256",
+        "name": "newBurnFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "BurnFeeUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "newEcoSystemFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "EcoSystemFeeUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
         "internalType": "address",
         "name": "account",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isExcluded",
+        "type": "bool"
       }
     ],
     "name": "ExcludeFromFees",
@@ -71,6 +88,12 @@
         "internalType": "address[]",
         "name": "accounts",
         "type": "address[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "isExcluded",
+        "type": "bool"
       }
     ],
     "name": "ExcludeMultipleAccountsFromFees",
@@ -93,6 +116,38 @@
       }
     ],
     "name": "GasForProcessingUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "newLiquidityFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "LiquidityFeeUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newLiquidityWallet",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "oldLiquidityWallet",
+        "type": "address"
+      }
+    ],
+    "name": "LiquidityWalletUpdated",
     "type": "event"
   },
   {
@@ -155,6 +210,19 @@
       }
     ],
     "name": "ProcessedDividendTracker",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "newRewardTokenFee",
+        "type": "uint256"
+      }
+    ],
+    "name": "RewardTokenFeeUpdated",
     "type": "event"
   },
   {
@@ -224,31 +292,19 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "enum TokenType",
-        "name": "tokenType",
-        "type": "uint8"
-      },
-      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "version",
+        "name": "tokens",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "wallet",
+        "type": "address"
       }
     ],
-    "name": "TokenCreated",
+    "name": "SwapAndSendFunds",
     "type": "event"
   },
   {
@@ -277,16 +333,54 @@
     "type": "event"
   },
   {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "oldAddress",
+        "type": "address"
+      }
+    ],
+    "name": "UpdateDividendTracker",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "oldAddress",
+        "type": "address"
+      }
+    ],
+    "name": "UpdateUniswapV2Router",
+    "type": "event"
+  },
+  {
     "inputs": [],
-    "name": "VERSION",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "RewardToken",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "_marketingWalletAddress",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "name": "RewardTokenFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -328,9 +422,23 @@
   },
   {
     "inputs": [],
+    "name": "burnFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "claim",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "deadWallet",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -368,7 +476,7 @@
     "name": "dividendTracker",
     "outputs": [
       {
-        "internalType": "contract BABYTOKENDividendTracker",
+        "internalType": "contract IgnoreFudDividendTracker",
         "name": "",
         "type": "address"
       }
@@ -378,8 +486,8 @@
   },
   {
     "inputs": [],
-    "name": "enableAntiBot",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "name": "ecoSystemFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -394,7 +502,8 @@
   },
   {
     "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
+      { "internalType": "address", "name": "account", "type": "address" },
+      { "internalType": "bool", "name": "excluded", "type": "bool" }
     ],
     "name": "excludeFromFees",
     "outputs": [],
@@ -403,11 +512,19 @@
   },
   {
     "inputs": [
-      { "internalType": "address[]", "name": "accounts", "type": "address[]" }
+      { "internalType": "address[]", "name": "accounts", "type": "address[]" },
+      { "internalType": "bool", "name": "excluded", "type": "bool" }
     ],
     "name": "excludeMultipleAccountsFromFees",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "fundWallet",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -469,13 +586,6 @@
   },
   {
     "inputs": [],
-    "name": "getMinimumTokenBalanceForDividends",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "getNumberOfDividendTokenHolders",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -502,15 +612,6 @@
     "inputs": [
       { "internalType": "address", "name": "account", "type": "address" }
     ],
-    "name": "isExcludedFromDividends",
-    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address", "name": "account", "type": "address" }
-    ],
     "name": "isExcludedFromFees",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
@@ -519,13 +620,6 @@
   {
     "inputs": [],
     "name": "liquidityFee",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "marketingFee",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -545,15 +639,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "pinkAntiBot",
-    "outputs": [
-      { "internalType": "contract IPinkAntiBot", "name": "", "type": "address" }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "uint256", "name": "gas", "type": "uint256" }],
     "name": "processDividendTracker",
     "outputs": [],
@@ -568,15 +653,11 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "rewardToken",
-    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "bool", "name": "_enable", "type": "bool" }],
-    "name": "setEnableAntiBot",
+    "inputs": [
+      { "internalType": "address", "name": "pair", "type": "address" },
+      { "internalType": "bool", "name": "value", "type": "bool" }
+    ],
+    "name": "setAutomatedMarketMakerPair",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -585,7 +666,7 @@
     "inputs": [
       { "internalType": "uint256", "name": "value", "type": "uint256" }
     ],
-    "name": "setLiquiditFee",
+    "name": "setBurnFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -594,25 +675,7 @@
     "inputs": [
       { "internalType": "uint256", "name": "value", "type": "uint256" }
     ],
-    "name": "setMarketingFee",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "address payable", "name": "wallet", "type": "address" }
-    ],
-    "name": "setMarketingWallet",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
-    ],
-    "name": "setSwapTokensAtAmount",
+    "name": "setEcoSystemFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -621,7 +684,34 @@
     "inputs": [
       { "internalType": "uint256", "name": "value", "type": "uint256" }
     ],
-    "name": "setTokenRewardsFee",
+    "name": "setLiquidityFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_rewardToken", "type": "address" }
+    ],
+    "name": "setRewardToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "value", "type": "uint256" }
+    ],
+    "name": "setRewardTokenFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "value", "type": "uint256" }
+    ],
+    "name": "setSwapLimit",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -634,16 +724,18 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "symbol",
-    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
-    "stateMutability": "view",
+    "inputs": [
+      { "internalType": "uint256", "name": "ethAmount", "type": "uint256" }
+    ],
+    "name": "sweep",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [],
-    "name": "tokenRewardsFee",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "symbol",
+    "outputs": [{ "internalType": "string", "name": "", "type": "string" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -722,6 +814,15 @@
   },
   {
     "inputs": [
+      { "internalType": "address", "name": "newAddress", "type": "address" }
+    ],
+    "name": "updateDividendTracker",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "uint256", "name": "newValue", "type": "uint256" }
     ],
     "name": "updateGasForProcessing",
@@ -731,9 +832,9 @@
   },
   {
     "inputs": [
-      { "internalType": "uint256", "name": "amount", "type": "uint256" }
+      { "internalType": "address", "name": "newAddress", "type": "address" }
     ],
-    "name": "updateMinimumTokenBalanceForDividends",
+    "name": "updateUniswapV2Router",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

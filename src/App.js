@@ -1,5 +1,5 @@
-import "@rainbow-me/rainbowkit/styles.css";
 import {
+  Chain,
   connectorsForWallets,
   RainbowKitProvider,
 } from "@rainbow-me/rainbowkit";
@@ -7,63 +7,76 @@ import {
   walletConnectWallet,
   metaMaskWallet,
   trustWallet,
-  ledgerWallet,
-  coinbaseWallet,
-  rainbowWallet,
-  braveWallet,
-  omniWallet,
-  injectedWallet,
 } from "@rainbow-me/rainbowkit/wallets";
 import { configureChains, createClient, WagmiConfig } from "wagmi";
-import { bsc } from "wagmi/chains";
+import Navbar from "./components/Navbar.jsx";
+import Dashboard from "./components/Dashboard.jsx";
 import { publicProvider } from "wagmi/providers/public";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import Test from "./components/Test.js";
-import Header from "./components/Header.js";
-import Navbar from "./components/Navbar.jsx";
-
-const { chains, provider } = configureChains([bsc], [publicProvider()]);
-
-const connectors = connectorsForWallets([
-  {
-    groupName: "Recommended",
-    wallets: [
-      trustWallet({ chains }),
-      metaMaskWallet({ chains }),
-      walletConnectWallet({ chains }),
-    ],
-  },
-  {
-    groupName: "Others",
-    wallets: [
-      coinbaseWallet({ chains }),
-      rainbowWallet({ chains }),
-      ledgerWallet({ chains }),
-      braveWallet({ chains }),
-      omniWallet({ chains }),
-      injectedWallet({ chains }),
-    ],
-  },
-]);
-
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
-  provider,
-});
+import "@rainbow-me/rainbowkit/styles.css";
 
 function App() {
+  const coreChain = {
+    id: 1116,
+    name: "Core BlockChain",
+    network: "Core Blockchain Mainnet",
+    iconUrl: "ipfs://QmeTQaBCkpbsxNNWTpoNrMsnwnAEf1wYTcn7CiiZGfUXD2",
+    iconBackground: "#fff",
+    nativeCurrency: {
+      decimals: 18,
+      name: "Core Blockchain Native Token",
+      symbol: "CORE",
+    },
+    rpcUrls: {
+      default: {
+        http: ["https://rpc.coredao.org/"],
+        http: ["https://rpc-core.icecreamswap.com"],
+      },
+    },
+    blockExplorers: {
+      default: { name: "Core Scan", url: "https://scan.coredao.org" },
+      etherscan: { name: "Core Scan", url: "https://scan.coredao.org" },
+    },
+    testnet: false,
+  };
+
+  const { provider, chains } = configureChains(
+    [coreChain],
+    [
+      publicProvider(),
+      jsonRpcProvider({
+        rpc: (chains) => ({ http: "https://rpc.coredao.org/" }),
+      }),
+    ]
+  );
+
+  const connectors = connectorsForWallets([
+    {
+      groupName: "Recommended",
+      wallets: [
+        metaMaskWallet({ chains }),
+        trustWallet({ chains }),
+        walletConnectWallet({ chains }),
+      ],
+    },
+  ]);
+
+  const wagmiClient = createClient({
+    autoConnect: true,
+    connectors,
+    provider,
+  });
+
   return (
     <>
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider
-          showRecentTransactions={true}
+          showRecentTransactions={false}
           modalSize="compact"
           chains={chains}
         >
-          {/* <Header />
-          <Test /> */}
           <Navbar />
+          <Dashboard />
         </RainbowKitProvider>
       </WagmiConfig>
     </>
